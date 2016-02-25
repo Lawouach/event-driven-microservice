@@ -194,6 +194,7 @@ This repository is not complete yet, there are many
 tasks still to carry to get the full picture:
 
 * implement an aggregate for commands
+* better configuration scheme
 * automatically discover services at startup
 * wrap the microservices into containers
 * orchestrate said containers to demonstrate scale and fault-tolerance
