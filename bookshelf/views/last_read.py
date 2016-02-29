@@ -62,6 +62,13 @@ def run():
     """
     args = get_cli_parser().parse_args()
 
+    # when running with docker compose
+    # we need to wait for kafka and consul
+    # to properly startup before we can
+    # connect to them
+    if args.delay_before_startup:
+        loop.run_until_complete(asyncio.sleep(args.delay_before_startup))
+
     # schedule the internal event consumer
     # that will run until we terminate this service
     asyncio.ensure_future(consume_events(topic=args.topic.encode('utf-8'),
