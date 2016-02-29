@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncio
+import os
 
 from pykafka import KafkaClient
 from pykafka.exceptions import ConsumerStoppedException
@@ -19,6 +20,10 @@ def client(hosts=None):
     """
     global kafka_client
     if not kafka_client:
+        if not hosts:
+            host = os.environ.get('KAFKA_BROKER_ADDR', '127.0.0.1')
+            port = int(os.environ.get('KAFKA_BROKER_PORT', 9092))
+            hosts = '%s:%d' % (host, port)
         kafka_client = KafkaClient(hosts=hosts)
     return kafka_client
 
