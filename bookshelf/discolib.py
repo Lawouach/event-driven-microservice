@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import asyncio
 from functools import wraps, partial
+import os
 
 from aioconsul import Consul
 
@@ -17,7 +18,9 @@ def client():
     """
     global _client
     if not _client:
-        _client = Consul()
+        host = os.environ.get('CONSUL_AGENT_ADDR', '127.0.0.1')
+        port = int(os.environ.get('CONSUL_AGENT_PORT', 8500))
+        _client = Consul(host='http://%s:%d' % (host, port))
     return _client
 
     
