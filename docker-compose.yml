@@ -32,7 +32,7 @@ services:
     ports:
      - "8400:8400"
      - "8500:8500"
-     - "8600:8600"
+     - "8600:8600/udp"
     networks:
       micronet:
     command: ["agent", "-server", "-bootstrap-expect=1", "-data-dir=/tmp/consul", "-node=disco", "-client=0.0.0.0"]
