@@ -17,7 +17,8 @@ async def bookshelf_new(request):
     View to see the current list of books
     in your bookshelf.
     """
-    await send_event(request.app["topic"], b"hello")
+    payload = await request.content.read()
+    await send_event(request.app["topic"], payload)
     return web.Response(status=201)
 
 

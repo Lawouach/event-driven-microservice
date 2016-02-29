@@ -53,7 +53,7 @@ async def event_handler(message):
 
     Simply store the event in a local state arena.
     """
-    bookshelf.append(message.value.decode('utf-8'))
+    bookshelf.append(json.loads(message.value.decode('utf-8')))
     
     
 def run():
