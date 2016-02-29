@@ -174,29 +174,29 @@ $ curl http://localhost:8500/v1/catalog/service/newbook
 Or seen via DNS:
 
 ```
-$ dig @127.0.0.1 -p 8600 newbook.service.consul SRV
+$dig @127.0.0.1 -p 8600 newbook.service.consul SRV
 
 ; <<>> DiG 9.9.5-11ubuntu1.2-Ubuntu <<>> @127.0.0.1 -p 8600 newbook.service.consul SRV
 ; (1 server found)
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 54030
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 52458
 ;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
 ;; WARNING: recursion requested but not available
 
 ;; QUESTION SECTION:
-;newbook.service.consul.	IN	SRV
+;newbook.service.consul.		IN	SRV
 
 ;; ANSWER SECTION:
-newbook.service.consul. 0	IN	SRV	1 1 8081 agent-one.node.dc1.consul.
+newbook.service.consul.	0	IN	SRV	1 1 8080 disco.node.dc1.consul.
 
 ;; ADDITIONAL SECTION:
-agent-one.node.dc1.consul. 0	IN	A	127.0.0.1
+disco.node.dc1.consul.	0	IN	CNAME	newbook.
 
-;; Query time: 1 msec
+;; Query time: 4 msec
 ;; SERVER: 127.0.0.1#8600(127.0.0.1)
-;; WHEN: Thu Feb 25 16:28:46 CET 2016
-;; MSG SIZE  rcvd: 158
+;; WHEN: Mon Feb 29 11:48:44 CET 2016
+;; MSG SIZE  rcvd: 145
 ```
 
 When terminating the service, the service will automatically
