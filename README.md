@@ -110,37 +110,6 @@ You can now connect to http://127.0.0.1:8080 and
 see the five last read books being returned a JSON
 list.
 
-When the service is started you may also see it has
-been registered against consul service discovery:
-
-```
-$ dig @127.0.0.1 -p 8600 lastbookread.service.consul SRV
-
-; <<>> DiG 9.9.5-11ubuntu1.2-Ubuntu <<>> @127.0.0.1 -p 8600 lastbookread.service.consul SRV
-; (1 server found)
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 54030
-;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-;; WARNING: recursion requested but not available
-
-;; QUESTION SECTION:
-;lastbookread.service.consul.	IN	SRV
-
-;; ANSWER SECTION:
-lastbookread.service.consul. 0	IN	SRV	1 1 8080 agent-one.node.dc1.consul.
-
-;; ADDITIONAL SECTION:
-agent-one.node.dc1.consul. 0	IN	A	127.0.0.1
-
-;; Query time: 1 msec
-;; SERVER: 127.0.0.1#8600(127.0.0.1)
-;; WHEN: Thu Feb 25 16:28:46 CET 2016
-;; MSG SIZE  rcvd: 158
-```
-
-When terminating the service, the service will automatically
-deregisters itself.
 
 ##### Add new book
 
@@ -182,6 +151,56 @@ $ curl -H "Content-Type: application/json" -X POST -d '{"title": "1984","author"
 ```
 
 You can view last read books via a GET to http://localhost:8080/
+
+## Service Discovery
+
+Once the cluster is up and running, all microservices
+register automatically to Consul. You can discover them as
+follows:
+
+```
+$ curl http://localhost:8500/v1/catalog/services
+{"consul":[],"lastreadbooks":["books","last"],"newbook":["books","new"]}
+```
+
+You can then obviously query Consul to discover more about
+a specific service:
+
+```
+$ curl http://localhost:8500/v1/catalog/service/newbook
+[{"Node":"disco","Address":"172.19.0.2","ServiceID":"newbook1","ServiceName":"newbook","ServiceTags":["books","new"],"ServiceAddress":"newbook","ServicePort":8080,"ServiceEnableTagOverride":false,"CreateIndex":5,"ModifyIndex":5}]
+```
+
+Or seen via DNS:
+
+```
+$ dig @127.0.0.1 -p 8600 newbook.service.consul SRV
+
+; <<>> DiG 9.9.5-11ubuntu1.2-Ubuntu <<>> @127.0.0.1 -p 8600 newbook.service.consul SRV
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 54030
+;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+;; WARNING: recursion requested but not available
+
+;; QUESTION SECTION:
+;newbook.service.consul.	IN	SRV
+
+;; ANSWER SECTION:
+newbook.service.consul. 0	IN	SRV	1 1 8081 agent-one.node.dc1.consul.
+
+;; ADDITIONAL SECTION:
+agent-one.node.dc1.consul. 0	IN	A	127.0.0.1
+
+;; Query time: 1 msec
+;; SERVER: 127.0.0.1#8600(127.0.0.1)
+;; WHEN: Thu Feb 25 16:28:46 CET 2016
+;; MSG SIZE  rcvd: 158
+```
+
+When terminating the service, the service will automatically
+deregisters itself.
 
 ## Testing
 
