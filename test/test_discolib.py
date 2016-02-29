@@ -2,6 +2,7 @@
 import asyncio
 from unittest import mock
 
+from aioconsul.bases import NodeService
 import asynctest
 import pytest
 
@@ -118,10 +119,15 @@ async def test_cannot_locate_service_without_a_name():
             
 @pytest.mark.asyncio
 async def test_locating_a_service_by_name():
+    class Service(asynctest.CoroutineMock):
+        def __iter__(self):
+            return iter([NodeService(id='svc1', name='svc1')])
+        
     with mock.patch('bookshelf.discolib.client') as client_func:
         client = asynctest.CoroutineMock()
         client_func.return_value = client
+        client.agent.services = Service()
         res = await discolib.locate_service("svc1")
-        client.catalog.nodes.assert_called_once_with(service="svc1")
+        assert res is not None
 
             

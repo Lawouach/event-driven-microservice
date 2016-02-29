@@ -77,10 +77,11 @@ async def discover_services(tags):
 
 async def locate_service(name):
     """
-    Return the set of nodes that expose the service
-    identified by the given name.
+    Return the service's location info.
     """
     if not name:
         raise ValueError("You must provide a service name")
     
-    return await client().catalog.nodes(service=name)
+    for svc in await client().agent.services.items():
+        if svc.name == name:
+            return svc
