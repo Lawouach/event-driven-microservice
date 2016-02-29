@@ -28,6 +28,12 @@ def get_cli_parser():
     """
     parser = argparse.ArgumentParser()
 
+    container = parser.add_argument_group('Container parameters')
+    container.add_argument('--delay', dest='delay_before_startup',
+                           action='store', help='delay before the service starts '
+                                                '(to cope with the time kafka and consul take to start)',
+                           type=int)
+    
     messaging = parser.add_argument_group('Messaging parameters')
     messaging.add_argument('--topic', dest='topic', action='store',
                             help='kafka topic to consume from',
@@ -35,7 +41,7 @@ def get_cli_parser():
     messaging.add_argument('--group', dest='group', action='store',
                             help='kafka group to consume from')
     messaging.add_argument('--broker', dest='broker', action='store',
-                            help='kafka broker address', required=True)
+                            help='kafka broker address')
     
     endpoint = parser.add_argument_group('Service parameters')
     endpoint.add_argument('--addr', dest='addr', action='store',
@@ -44,10 +50,12 @@ def get_cli_parser():
     endpoint.add_argument('--port', dest='port',
                           action='store', type=int,
                           help='port to listen on', default=8080)
-    endpoint.add_argument('--name', dest='name', action='store',
-                          help='published service name')
-    endpoint.add_argument('--id', dest='id', action='store',
-                          help='published service id')
-    endpoint.add_argument('--tags', dest='tags', action='store',
-                          help='published service tags', nargs='*')
+    
+    disco = parser.add_argument_group('Discovery parameters')
+    disco.add_argument('--name', dest='name', action='store',
+                       help='published service name')
+    disco.add_argument('--id', dest='id', action='store',
+                       help='published service id')
+    disco.add_argument('--tags', dest='tags', action='store',
+                       help='published service tags', nargs='*')
     return parser
