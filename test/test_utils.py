@@ -6,11 +6,6 @@ import pytest
 
 from bookshelf import utils
 
-def test_parse_kafka_broker_address_is_mandatory():
-    parser = utils.get_cli_parser()
-    with pytest.raises(SystemExit) as excinfo:
-        parser.parse_args(['--topic', 'test'])
-
         
 def test_parse_kafka_topic_is_mandatory():
     parser = utils.get_cli_parser()
