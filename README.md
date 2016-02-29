@@ -174,7 +174,7 @@ $ curl http://localhost:8500/v1/catalog/service/newbook
 Or seen via DNS:
 
 ```
-$dig @127.0.0.1 -p 8600 newbook.service.consul SRV
+$ dig @127.0.0.1 -p 8600 newbook.service.consul SRV
 
 ; <<>> DiG 9.9.5-11ubuntu1.2-Ubuntu <<>> @127.0.0.1 -p 8600 newbook.service.consul SRV
 ; (1 server found)
