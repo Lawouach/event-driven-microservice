@@ -84,3 +84,20 @@ services:
      CONSUL_AGENT_PORT: 8500
     command: ["/usr/local/app/bookshelf/aggregates/book_read.py", "--delay", "10", "--broker", "kafka:9092", "--name", "readbook", "--id", "readbook1", "--tags", "books", "read"]
     
+  api:
+    image: bookshelf:0.1
+    container_name: api
+    ports:
+     - "8000:8080"
+    depends_on:
+     - disco
+     - newbook
+     - readbook
+     - lastread
+    networks:
+      micronet:
+    environment:
+     CONSUL_AGENT_ADDR: disco
+     CONSUL_AGENT_PORT: 8500
+    command: ["/usr/local/app/bookshelf/gateways/shelf.py"]
+    
