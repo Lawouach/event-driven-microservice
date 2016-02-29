@@ -1,0 +1,67 @@
+version: '2'
+networks:
+  micronet:
+services:
+  zoo:
+    image: wurstmeister/zookeeper
+    container_name: zoo
+    ports:
+     - "2181:2181"
+    networks:
+      micronet:
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+     - "9092:9092"
+    networks:
+      micronet:
+    depends_on:
+     - zoo
+    environment:
+     KAFKA_BROKER_ID: 1
+     KAFKA_ADVERTISED_HOST_NAME: kafka
+     KAFKA_ADVERTISED_PORT: 9092
+     KAFKA_ZOOKEEPER_CONNECT: zoo:2181
+     KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+     KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+     KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+  disco:
+    image: gliderlabs/consul
+    container_name: disco
+    ports:
+     - "8400:8400"
+     - "8500:8500"
+     - "8600:8600"
+    networks:
+      micronet:
+    command: ["agent", "-server", "-bootstrap-expect=1", "-data-dir=/tmp/consul", "-node=disco", "-client=0.0.0.0"]
+  lastread:
+    image: bookshelf:0.1
+    container_name: lastread
+    ports:
+     - "8080:8080"
+    depends_on:
+     - kafka
+     - disco
+    networks:
+      micronet:
+    environment:
+     CONSUL_AGENT_ADDR: disco
+     CONSUL_AGENT_PORT: 8500
+    command: ["/usr/local/app/bookshelf/views/last_read.py", "--delay", "10", "--broker", "kafka:9092", "--addr", "lastread", "--topic", "bookshelf", "--name", "lastreadbooks", "--id", "lastread1", "--tags", "books", "last"]
+  newbook:
+    image: bookshelf:0.1
+    container_name: newbook
+    ports:
+     - "8081:8080"
+    depends_on:
+     - kafka
+     - disco
+    networks:
+      micronet:
+    environment:
+     CONSUL_AGENT_ADDR: disco
+     CONSUL_AGENT_PORT: 8500
+    command: ["/usr/local/app/bookshelf/aggregates/new_book.py", "--delay", "10", "--broker", "kafka:9092", "--addr", "newbook", "--topic", "bookshelf", "--name", "newbook", "--id", "newbook1", "--tags", "books", "new"]
+    
