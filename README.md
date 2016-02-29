@@ -1,5 +1,4 @@
-Event driven Microservices in Python
-====================================
+# Event driven Microservices in Python
 
 This repository holds a simple event-driven microservice
 showcase implementing the architecture style
@@ -17,11 +16,12 @@ you should copy/paste as-is. They merely translate
 one approach for event-driven microservices and,
 hopefully, will inspire you.
 
-Get started
-===========
+## Get started
 
-Python requirements
--------------------
+### Local without Docker
+
+#### Python requirements
+
 
 For the services written in Python, you will need
 Python 3.5+ (not below):
@@ -46,8 +46,7 @@ Then, simply use pip to install the following packages:
 * [pykafka](http://pykafka.readthedocs.org/en/latest/)
 
 
-Service Discovery
------------------
+#### Service Discovery
 
 You will need to run a [consul](https://www.consul.io)
 agent locally so that your service is registered.
@@ -57,8 +56,7 @@ Something like:
 $ ./consul agent -server -bootstrap-expect=1 -data-dir=/tmp/consul -node=agent-one -bind=127.0.0.1
 ```
 
-Kafka cluster
--------------
+#### Kafka cluster
 
 You may decide to run a [full cluster in the cloud](http://www.defuze.org/archives/351-running-a-zookeeper-and-kafka-cluster-with-kubernetes-on-aws.html)
 or you may just run a single-node cluster on your local
@@ -77,8 +75,7 @@ $ ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor
 ```
 
 
-Push events to Kafka
---------------------
+##### Push events to Kafka
 
 To make it simpler to push events to Kafka topics,
 you may use [Kafkacat](https://github.com/edenhill/kafkacat),
@@ -94,22 +91,20 @@ $ kafkacat -b localhost:9092 -P -t bookshelf
 Each line you enter will be pushed as data to the `bookshelf`
 topic.
 
-Run the microservices
-=====================
+#### Run the microservices
 
 At this stage, you've got Kafka and Zookeeper running
 as well as Consul. You can run thefollowing microservices:
 
-Last Read Books
----------------
+##### Last Read Books
 
 This can be run as follows:
 
 ```
-$ python bookshelf/views/last_read.py --topic bookshelf --broker localhost:9092 --addr 127.0.0.1 --port 8087 --name lastreadbooks --id lastread1 --tags books last
+$ python bookshelf/views/last_read.py --topic bookshelf --broker localhost:9092 --addr 127.0.0.1 --port 8080 --name lastreadbooks --id lastread1 --tags books last
 ```
 
-You can now connect to http://127.0.0.1:8087 and
+You can now connect to http://127.0.0.1:8080 and
 see the five last read books being returned a JSON
 list.
 
@@ -131,7 +126,7 @@ $ dig @127.0.0.1 -p 8600 lastbookread.service.consul SRV
 ;lastbookread.service.consul.	IN	SRV
 
 ;; ANSWER SECTION:
-lastbookread.service.consul. 0	IN	SRV	1 1 8087 agent-one.node.dc1.consul.
+lastbookread.service.consul. 0	IN	SRV	1 1 8080 agent-one.node.dc1.consul.
 
 ;; ADDITIONAL SECTION:
 agent-one.node.dc1.consul. 0	IN	A	127.0.0.1
@@ -145,9 +140,41 @@ agent-one.node.dc1.consul. 0	IN	A	127.0.0.1
 When terminating the service, the service will automatically
 deregisters itself.
 
+##### Add new book
 
-Testing
-=======
+This can be run as follows:
+
+```
+$ python bookshelf/aggregates/new_book.py --topic bookshelf --broker localhost:9092 --addr 127.0.0.1 --port 8081 --name newbook --id newbook1 --tags books new
+```
+
+You can add a book via a simple POST to http://localhost:8081/
+
+### Local with Docker
+
+You will need to install:
+
+* Docker 1.10+ because we rely on the new network and DNS features
+* docker-compose
+
+Once that's done, you first need to create the image:
+
+```
+$ docker build -t bookshelf:0.1 .
+```
+
+Now, you can simply create the whole cluster:
+
+```
+$ docker-compose up
+```
+
+You can add a book via a simple POST to http://localhost:8081/
+You can view last read books via a GET to http://localhost:8080/
+
+
+## Testing
+
 
 This repository comes with a set of unit tests
 that exercise the code:
@@ -164,8 +191,7 @@ You will need to install first:
 * [pytest-cov](https://pypi.python.org/pypi/pytest-cov)
 
 
-Why Python 3.5?
-===============
+## Why Python 3.5?
 
 These examples rely on Python 3.5 because the new
 async features brought by Python 3.4 and
@@ -177,8 +203,8 @@ The language also supports [type hints](https://docs.python.org/3/library/typing
 that these examples don't yet benefit from but
 will in the future to discover services.
 
-Why Kafka?
-==========
+## Why Kafka?
+
 
 Kafka is a brilliant platform to store events. It's fast, scalable
 and flexible. There are plenty of clients out there for
@@ -187,8 +213,7 @@ it too.
 There are [alternatives to flow events](http://muoncore.io/)
 across the board.
 
-TODO
-====
+## TODO
 
 This repository is not complete yet, there are many
 tasks still to carry to get the full picture:
@@ -196,5 +221,5 @@ tasks still to carry to get the full picture:
 * implement an aggregate for commands
 * better configuration scheme
 * automatically discover services at startup
-* wrap the microservices into containers
+* ~~wrap the microservices into containers~~
 * orchestrate said containers to demonstrate scale and fault-tolerance
