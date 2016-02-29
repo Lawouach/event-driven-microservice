@@ -168,7 +168,7 @@ a specific service:
 
 ```
 $ curl http://localhost:8500/v1/catalog/service/newbook
-[{"Node":"disco","Address":"172.19.0.2","ServiceID":"newbook1","ServiceName":"newbook","ServiceTags":["books","new"],"ServiceAddress":"newbook","ServicePort":8080,"ServiceEnableTagOverride":false,"CreateIndex":5,"ModifyIndex":5}]
+[{"Node":"disco","Address":"172.19.0.2","ServiceID":"newbook1","ServiceName":"newbook","ServiceTags":["books","new"],"ServiceAddress":"172.19.0.5","ServicePort":8080,"ServiceEnableTagOverride":false,"CreateIndex":5,"ModifyIndex":5}]
 ```
 
 Or seen via DNS:
@@ -180,7 +180,7 @@ $ dig @127.0.0.1 -p 8600 newbook.service.consul SRV
 ; (1 server found)
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 52458
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 13670
 ;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
 ;; WARNING: recursion requested but not available
 
@@ -191,12 +191,12 @@ $ dig @127.0.0.1 -p 8600 newbook.service.consul SRV
 newbook.service.consul.	0	IN	SRV	1 1 8080 disco.node.dc1.consul.
 
 ;; ADDITIONAL SECTION:
-disco.node.dc1.consul.	0	IN	CNAME	newbook.
+disco.node.dc1.consul.	0	IN	A	172.19.0.5
 
-;; Query time: 4 msec
+;; Query time: 3 msec
 ;; SERVER: 127.0.0.1#8600(127.0.0.1)
-;; WHEN: Mon Feb 29 11:48:44 CET 2016
-;; MSG SIZE  rcvd: 145
+;; WHEN: Mon Feb 29 14:34:20 CET 2016
+;; MSG SIZE  rcvd: 140
 ```
 
 When terminating the service, the service will automatically
