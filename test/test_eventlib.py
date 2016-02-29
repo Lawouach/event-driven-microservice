@@ -39,5 +39,6 @@ async def test_consumer_will_exit_when_kafka_consumer_stops(event_loop):
         await asyncio.sleep(0.2)
         await eventlib.stop_consuming_events('my-topic')
 
-    assert eventlib.has_consumer('my-topic') == False
+    has_consumer = 'my-topic' in eventlib.consumers
+    assert has_consumer is False
     

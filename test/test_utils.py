@@ -7,21 +7,15 @@ import pytest
 from bookshelf import utils
 
         
-def test_parse_kafka_topic_is_mandatory():
+def test_parse_default_service_listening_address_is_all_interfaces():
     parser = utils.get_cli_parser()
-    with pytest.raises(SystemExit) as excinfo:
-        parser.parse_args(['--broker', 'addr'])
-
-        
-def test_parse_default_service_listening_address_is_localhost():
-    parser = utils.get_cli_parser()
-    args = parser.parse_args(['--broker', 'addr', '--topic', 'test'])
-    assert args.addr == '127.0.0.1'
+    args = parser.parse_args(['--broker', 'addr'])
+    assert args.addr == '0.0.0.0'
 
     
-def test_parse_default_service_listening_port_is_localhost():
+def test_parse_default_service_listening_port_is_8080():
     parser = utils.get_cli_parser()
-    args = parser.parse_args(['--broker', 'addr', '--topic', 'test'])
+    args = parser.parse_args(['--broker', 'addr'])
     assert args.port == 8080
 
     

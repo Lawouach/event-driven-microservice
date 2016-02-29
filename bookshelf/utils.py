@@ -37,9 +37,6 @@ def get_cli_parser():
                            type=int)
     
     messaging = parser.add_argument_group('Messaging parameters')
-    messaging.add_argument('--topic', dest='topic', action='store',
-                            help='kafka topic to consume from',
-                            required=True)
     messaging.add_argument('--group', dest='group', action='store',
                             help='kafka group to consume from')
     messaging.add_argument('--broker', dest='broker', action='store',
@@ -48,7 +45,7 @@ def get_cli_parser():
     endpoint = parser.add_argument_group('Service parameters')
     endpoint.add_argument('--addr', dest='addr', action='store',
                           help='address to bind to',
-                          default='127.0.0.1')
+                          default='0.0.0.0')
     endpoint.add_argument('--port', dest='port',
                           action='store', type=int,
                           help='port to listen on', default=8080)

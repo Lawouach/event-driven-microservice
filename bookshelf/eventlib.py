@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 import asyncio
+from datetime import datetime
+import json
 import os
+import uuid
 
 from pykafka import KafkaClient
 from pykafka.exceptions import ConsumerStoppedException
 
-__all__ = ["consume_events",
+__all__ = ["consume_events", "make_event",
            "stop_consuming_events",
            "send_event", "start_events_sender",
-            "stop_events_sender"]
+           "stop_events_sender"]
 
 consumer_running = None
 kafka_client = None
@@ -77,26 +80,50 @@ async def stop_consuming_events(topic):
             await asyncio.sleep(0.1)
 
 
-def has_consumer(topic):
-    global consumers
-    return topic in consumers
-
-
 async def start_events_sender(topic, addr):
+    """
+    Start an event producer in the background.
+    """
     topic_name = topic
     topic = client(addr).topics[topic]
     producers[topic_name] = topic.get_producer()
 
     
 async def stop_events_sender(topic):
+    """
+    Stop the producer associated to the
+    given topic.
+    """
     if topic in producers:
         producer = producers.get(topic, None)
         producer.stop()
 
     
-async def send_event(topic, payload):
+async def send_event(topic, event):
+    """
+    Push event to the given topic. If no
+    producer exists for this topic, a :exc:`RuntimeError`
+    is raised.
+    """
     if topic not in producers:
         raise RuntimeError("No event senders initialized for '%s'" % topic)
+
+    if isinstance(event, dict):
+        event = json.dumps(event).encode('utf-8')
     
     producer = producers[topic]
-    producer.produce(payload)
+    producer.produce(event)
+
+    
+def make_event(name, payload, safe=True, idempotent=True):
+    """
+    Build an event structure made of the given payload
+    """
+    return {
+        "id": str(uuid.uuid4()),
+        "name": name,
+        "created": datetime.utcnow().isoformat(),
+        "safe": safe,
+        "idempotent": idempotent,
+        "payload": payload
+    }
