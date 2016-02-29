@@ -231,6 +231,8 @@ tasks still to carry to get the full picture:
 
 * implement an aggregate for commands
 * better configuration scheme
+* propose a much nicer REST API
 * automatically discover services at startup
+* wait for kafka to be available before starting microservices
 * ~~wrap the microservices into containers~~
 * orchestrate said containers to demonstrate scale and fault-tolerance
