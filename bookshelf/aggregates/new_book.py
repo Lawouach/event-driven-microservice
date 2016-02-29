@@ -26,7 +26,7 @@ async def bookshelf_new(request):
     # let's push it
     await send_event(b"bookshelf", event)
     
-    return web.Response(status=201)
+    return web.json_response(status=201, data=book)
 
     
 if __name__ == '__main__':  # pragma: no cover
