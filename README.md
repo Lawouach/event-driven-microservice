@@ -150,7 +150,11 @@ This can be run as follows:
 $ python bookshelf/aggregates/new_book.py --topic bookshelf --broker localhost:9092 --addr 127.0.0.1 --port 8081 --name newbook --id newbook1 --tags books new
 ```
 
-You can add a book via a simple POST to http://localhost:8081/
+You can add a book via a simple POST to http://localhost:8081/:
+
+```
+$ curl -H "Content-Type: application/json" -X POST -d '{"title": "1984","author":[{"name": "George Orwell"}],"type": "novel","year": "1949"}' http://localhost:8081/
+```
 
 ### Local with Docker
 
@@ -171,9 +175,13 @@ Now, you can simply create the whole cluster:
 $ docker-compose up
 ```
 
-You can add a book via a simple POST to http://localhost:8081/
-You can view last read books via a GET to http://localhost:8080/
+You can add a book via a simple POST to http://localhost:8081/:
 
+```
+$ curl -H "Content-Type: application/json" -X POST -d '{"title": "1984","author":[{"name": "George Orwell"}],"type": "novel","year": "1949"}' http://localhost:8081/
+```
+
+You can view last read books via a GET to http://localhost:8080/
 
 ## Testing
 
