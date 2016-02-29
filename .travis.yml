@@ -4,7 +4,8 @@ python:
   - 3.5
 
 install:
-  - pip install pykafka aiohttp aioconsul pytest-asyncio asynctest
+  - pip install -r requirements.txt
+  - pip install pytest-asyncio asynctest
   - export PYTHONPATH=`pwd`
 
 script: 
