@@ -7,6 +7,7 @@ from aiohttp import web
 from bookshelf.eventlib import send_event, make_event
 from bookshelf.svclib import run_aggregate_service
 
+
 async def bookshelf_new(request):
     """
     Add the given book to the shelf event lake.
