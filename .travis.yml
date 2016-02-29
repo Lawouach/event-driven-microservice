@@ -3,11 +3,9 @@ language: python
 python:
   - 3.5
 
-before_install:
+install:
   - pip install -r requirements.txt
   - pip install pytest-asyncio
-
-install:
   - export PYTHONPATH=`pwd`
 
 script: 
