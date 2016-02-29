@@ -6,11 +6,14 @@ from pykafka import KafkaClient
 from pykafka.exceptions import ConsumerStoppedException
 
 __all__ = ["consume_events",
-           "stop_consuming_events"]
+           "stop_consuming_events",
+           "send_event", "start_events_sender",
+            "stop_events_sender"]
 
 consumer_running = None
 kafka_client = None
 consumers = {}
+producers = {}
 
 
 def client(hosts=None):
@@ -37,7 +40,7 @@ async def consume_events(topic, group, addr, callback, delay=0.01):
     message.
     """
     if topic in consumers:
-        raise RuntimeError("A consumer already exists for this topic")
+        raise RuntimeError("A consumer already exists for topic: %s" % topic)
 
     topic_name = topic
     topic = client(addr).topics[topic]
@@ -77,3 +80,23 @@ async def stop_consuming_events(topic):
 def has_consumer(topic):
     global consumers
     return topic in consumers
+
+
+async def start_events_sender(topic, addr):
+    topic_name = topic
+    topic = client(addr).topics[topic]
+    producers[topic_name] = topic.get_producer()
+
+    
+async def stop_events_sender(topic):
+    if topic in producers:
+        producer = producers.get(topic, None)
+        producer.stop()
+
+    
+async def send_event(topic, payload):
+    if topic not in producers:
+        raise RuntimeError("No event senders initialized for '%s'" % topic)
+    
+    producer = producers[topic]
+    producer.produce(payload)
