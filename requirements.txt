@@ -1,0 +1,3 @@
+pykafka
+aiohttp
+aioconsul
