@@ -16,6 +16,8 @@ you should copy/paste as-is. They merely translate
 one approach for event-driven microservices and,
 hopefully, will inspire you.
 
+[![Build Status](https://travis-ci.org/Lawouach/event-driven-microservice.svg?branch=master)](https://travis-ci.org/Lawouach/event-driven-microservice)
+
 ## Get started
 
 ### Local without Docker
