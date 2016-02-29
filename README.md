@@ -189,6 +189,7 @@ You will need to install first:
 * [pytest](https://pypi.python.org/pypi/pytest)
 * [pytest-asyncio](https://pypi.python.org/pypi/pytest-asyncio)
 * [pytest-cov](https://pypi.python.org/pypi/pytest-cov)
+* [asynctest](http://asynctest.readthedocs.org/en/latest/)
 
 
 ## Why Python 3.5?
