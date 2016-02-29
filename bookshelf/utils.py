@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import argparse
 import asyncio
+import socket
 
 from aiohttp import web
 
-__all__ = ["get_cli_parser", "webserver"]
+__all__ = ["get_cli_parser", "webserver",
+           "get_node_address"]
 
 
 async def webserver(loop, view, addr, port, path='/', method='POST'):
@@ -59,3 +61,11 @@ def get_cli_parser():
     disco.add_argument('--tags', dest='tags', action='store',
                        help='published service tags', nargs='*')
     return parser
+
+def get_node_address(node_name=''):
+    """
+    Return the IP address associated to the node's domain.
+    This is by no means perfect and should not be
+    relied upon aside from testing purpose.
+    """
+    return socket.gethostbyname(socket.getfqdn(node_name))

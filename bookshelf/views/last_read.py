@@ -31,7 +31,7 @@ from aiohttp import web
 from bookshelf.discolib import register_service, deregister_service
 from bookshelf.eventlib import consume_events, stop_consuming_events
 from bookshelf.restlib import webserver, route_to_resource
-from bookshelf.utils import get_cli_parser
+from bookshelf.utils import get_cli_parser, get_node_address
 
 # internal state
 bookshelf = collections.deque(maxlen=5)
@@ -54,7 +54,7 @@ async def event_handler(message):
     Simply store the event in a local state arena.
     """
     bookshelf.append(json.loads(message.value.decode('utf-8')))
-    
+
     
 def run():
     """
@@ -87,7 +87,7 @@ def run():
             id=args.id,
             name=args.name,
             port=args.port,
-            address=args.addr,
+            address=get_node_address(),
             tags=args.tags
         )
     )

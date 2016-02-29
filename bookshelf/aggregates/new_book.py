@@ -8,7 +8,7 @@ from bookshelf.discolib import register_service, deregister_service
 from bookshelf.eventlib import send_event, start_events_sender,\
      stop_events_sender
 from bookshelf.restlib import webapp, webserver, route_to_resource
-from bookshelf.utils import get_cli_parser
+from bookshelf.utils import get_cli_parser, get_node_address
 
 loop = asyncio.get_event_loop()
 
@@ -56,7 +56,7 @@ def run():
             id=args.id,
             name=args.name,
             port=args.port,
-            address=args.addr,
+            address=get_node_address(),
             tags=args.tags
         )
     )
