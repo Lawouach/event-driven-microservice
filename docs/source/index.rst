@@ -1,5 +1,5 @@
 Welcome to Bookshelf - An event-driven microservice showcase's documentation!
-=============================================================================
+#############################################################################
 
 The event-driven microservice showcase demonstrates
 an implementation of ideas developed by
@@ -46,6 +46,38 @@ The following diagram represents the general
 architecture:
 
 .. image:: /_static/images/architecture.png
+
+*Why Python 3.5?*
+
+These examples rely on Python 3.5 because the new
+async features brought by Python 3.4 and
+`consolidated <https://docs.python.org/3/whatsnew/3.5.html#whatsnew-pep-492>`_
+in 3.5.1 fit extraordinaly well a function-driven
+code design.
+
+The language also supports `type hints <https://docs.python.org/3/library/typing.html#module-typing>`_
+that these examples don't yet benefit from but
+will in the future to discover services.
+
+*Why Kafka?*
+
+Kafka is a brilliant platform to store events. It's fast, scalable
+and flexible. There are plenty of clients out there for
+it too.
+
+There are `alternatives to flow events <http://muoncore.io/>`_
+across the board.
+
+*Why Consul?*
+
+Consul is a nifty tool that has an extensive featureset
+while being easy to setup and a small footprint. It supports
+service discovery via DNS and HTTP which makes it very
+powerful for various kinds of service discovery. Indeed,
+a DNS record may be present when a microservice has been
+started, but it doesn't mean the service is ready per-se. Using
+the HTTP interface to register said service only when
+ready, means other services can be sure they can start using it.
 
 .. toctree::
    :maxdepth: 2
