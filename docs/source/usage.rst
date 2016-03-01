@@ -5,12 +5,15 @@ Service Discovery
 -----------------
 
 Once the cluster is up and running, all microservices
-register automatically to Consul. You can discover them as
-follows:
+register automatically to Consul. The consul UI can
+be reached at http://<host>:8500/ui.
+
+
+You can discover them as follows:
 
 .. code-block:: console
 		
-    $ curl http://localhost:8500/v1/catalog/services
+    $ curl http://<host>:8500/v1/catalog/services
     {"consul":[],"lastreadbooks":["books","last"],"newbook":["books","new"]}
 
 You can then obviously query Consul to discover more about
@@ -18,14 +21,14 @@ a specific service:
 
 .. code-block:: console
 
-    $ curl http://localhost:8500/v1/catalog/service/newbook
+    $ curl http://<host>:8500/v1/catalog/service/newbook
     [{"Node":"disco","Address":"172.19.0.2","ServiceID":"newbook1","ServiceName":"newbook","ServiceTags":["books","new"],"ServiceAddress":"172.19.0.5","ServicePort":8080,"ServiceEnableTagOverride":false,"CreateIndex":5,"ModifyIndex":5}]
 
 Or seen via DNS:
 
 .. code-block:: console
 
-    $ dig @127.0.0.1 -p 8600 newbook.service.consul SRV
+    $ dig @0.0.0.0 -p 8600 newbook.service.consul SRV
 
     ; <<>> DiG 9.9.5-11ubuntu1.2-Ubuntu <<>> @127.0.0.1 -p 8600 newbook.service.consul SRV
     ; (1 server found)
