@@ -54,6 +54,15 @@ architecture:
 
 .. image:: /_static/images/architecture.png
 
+The nice aspect of event-driven architecture is it supports
+a clean decoupling between microservices. To enforce the dynamic
+nature of a microservice architecture design for change, the
+service discovery also supports that decoupling idea, since
+microservices don't have to know each other's location. They
+know how to ask the discovery service location based on
+a set of rich criteria.
+
+	   
 *Why Python 3.5?*
 
 These examples rely on Python 3.5 because the new
