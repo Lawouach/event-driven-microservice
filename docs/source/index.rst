@@ -1,6 +1,13 @@
 Welcome to Bookshelf - An event-driven microservice showcase's documentation!
 #############################################################################
 
+:Author: `Sylvain Hellegouarch <http://www.defuze.org>`_
+:Release: |version|
+:License: `BSD <https://github.com/Lawouach/event-driven-microservice/blob/master/LICENSE>`_
+:Source code: https://github.com/Lawouach/event-driven-microservice
+:Build status: https://travis-ci.org/Lawouach/event-driven-microservice
+
+
 The event-driven microservice showcase demonstrates
 an implementation of ideas developed by
 `Russ Miles <http://www.russmiles.com/>`_ in his
