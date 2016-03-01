@@ -37,7 +37,7 @@ services:
      - "8600:8600/udp"
     networks:
       - micronet
-    command: ["agent", "-server", "-bootstrap-expect=1", "-data-dir=/tmp/consul", "-node=disco", "-client=0.0.0.0"]
+    command: ["agent", "-server", "-bootstrap-expect=1", "-data-dir=/tmp/consul", "-node=disco", "-client=0.0.0.0", "-ui"]
     
   lastread:
     image: bookshelf:0.1
