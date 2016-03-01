@@ -1,3 +1,6 @@
 pykafka
 aiohttp
 aioconsul
+Flask
+flasgger
+requests

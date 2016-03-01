@@ -3,34 +3,85 @@ import argparse
 import asyncio
 import json
 
-import aiohttp
-from aiohttp import web
+from flask import Flask, request, jsonify, Response
+from flasgger import Swagger
+import requests
 
 from bookshelf.restlib import route_to_resource, webapp, webserver
 from bookshelf.discolib import locate_service
 from bookshelf.utils import get_cli_parser
 
+app = Flask("bookshelf")
+Swagger(app)
 
-async def add_a_book(request):
-    with aiohttp.ClientSession() as session:
-        async with session.post(webapp['newbook']['url'],
-                                data=await request.content.read()) as resp:
-            data = json.loads((await resp.content.read()).decode('utf-8'))
-            return web.json_response(status=resp.status, data=data)
+@app.route("/bookshelf/books", methods=['POST'])
+def add_a_book():
+    """
+    Add a new book onto your bookshelf.
+    ---
+    tags:
+      - bookshelf
+    parameters:
+      - in: body
+        type: body
+        description: book description
+    responses:
+      201:
+        description: created
+        schema:
+          properties:
+            result:
+              type: string
+              description: public book id
+    """
+    r = requests.post(webapp['newbook']['url'],
+                      data=json.dumps(request.get_json()),
+                      headers={'content-type': 'application/json'})
+    book = r.json()
+    return jsonify(id=book['id']), 201
 
-        
-async def last_read_book(request):
-    with aiohttp.ClientSession() as session:
-        async with session.get(webapp['lastreadbooks']['url']) as resp:
-            data = json.loads((await resp.content.read()).decode('utf-8'))
-            return web.json_response(status=resp.status, data=data)
 
-        
-async def finished_book(request):
-    with aiohttp.ClientSession() as session:
-        async with session.post(webapp['readbook']['url'],
-                                data=await request.content.read()) as resp:
-            return web.json_response(status=resp.status)
+@app.route("/bookshelf/books/last/read", methods=['GET'])
+def last_read_book():
+    """
+    Retrieve the list of the last five read books
+    ---
+    tags:
+      - bookshelf
+    responses:
+      200:
+        description: the list of books
+        schema:
+          properties:
+            result:
+              type: array
+              description: list of books
+    """
+    r = requests.get(webapp['lastreadbooks']['url'])
+    return Response(response=json.dumps(r.json()),
+                    status=200,
+                    mimetype="application/json")
+
+
+@app.route("/bookshelf/books/<book_id>/finished", methods=['POST'])
+def finished_book(book_id):
+    """
+    Mark a book as finished
+    ---
+    tags:
+      - bookshelf
+    parameters:
+      - in: path
+        type: string
+        description: the book's identifier as a UUID
+    responses:
+      204:
+        description: the book has been marked finished
+    """
+    r = requests.post(webapp['readbook']['url'],
+                      data=json.dumps({"id": book_id}),
+                      headers={'content-type': 'application/json'})
+    return "", 204
 
         
 async def wait_until_peer_service_is_available(name, backoff=1):
@@ -45,7 +96,7 @@ async def wait_until_peer_service_is_available(name, backoff=1):
             break
         await asyncio.sleep(backoff)
 
-
+        
 def run():
     """
     A very basic (and rather non optimised) reverse proxy
@@ -54,42 +105,18 @@ def run():
     Each service's address is discovered via the
     discovery service.
     """
-    loop = asyncio.get_event_loop()
-    
     args = get_cli_parser().parse_args()
-
-    # create a new book
-    loop.run_until_complete(wait_until_peer_service_is_available('newbook'))
-    loop.run_until_complete(route_to_resource(add_a_book,
-                            path='/bookshelf/books',
-                            method='POST'))
-
-    # retrieve the list of read books
-    loop.run_until_complete(wait_until_peer_service_is_available('lastreadbooks'))
-    loop.run_until_complete(route_to_resource(last_read_book,
-                            path='/bookshelf/books/last/read'))
-
-
-    # set a book as read
-    loop.run_until_complete(wait_until_peer_service_is_available('readbook'))
-    loop.run_until_complete(route_to_resource(finished_book,
-                            path='/bookshelf/books/{id}/finished',
-                            method='POST'))
-
     
-    srv = loop.run_until_complete(webserver(args.addr, args.port))
-        
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(wait_until_peer_service_is_available('newbook'))
+    loop.run_until_complete(wait_until_peer_service_is_available('lastreadbooks'))
+    loop.run_until_complete(wait_until_peer_service_is_available('readbook'))
+    loop.close()
+
     try:
-        loop.run_forever()
+        app.run(debug=True, host='0.0.0.0', port=8080)
     except KeyboardInterrupt:
         pass
-    finally:
-        srv.close()
-        loop.run_until_complete(srv.wait_closed())
-        # give the time for remaining requests to complete
-        loop.run_until_complete(asyncio.sleep(2))
-        
-    loop.close()
 
 
 if __name__ == '__main__':  # pragma: no cover

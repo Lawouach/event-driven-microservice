@@ -1,5 +1,8 @@
 pykafka
 aiohttp
 aioconsul
+Flask
+flasgger
+requests
 sphinx
 sphinxcontrib-httpdomain

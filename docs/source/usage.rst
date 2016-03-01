@@ -61,6 +61,11 @@ REST API
 All the calls of the REST API are executed against
 the gateway running on port 8000.
 
+The API is self documented through a
+`Swagger spec <http://swagger.io/>`_ and available
+at http://<host>:8000/apidocs/index.html.
+
+
 .. warning::
 
    The API is far from being exhaustive. It will be
