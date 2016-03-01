@@ -8,7 +8,7 @@ services:
     ports:
      - "2181:2181"
     networks:
-      micronet:
+      - micronet
       
   kafka:
     image: wurstmeister/kafka
@@ -16,7 +16,7 @@ services:
     ports:
      - "9092:9092"
     networks:
-      micronet:
+      - micronet
     depends_on:
      - zoo
     environment:
@@ -24,9 +24,9 @@ services:
      KAFKA_ADVERTISED_HOST_NAME: kafka
      KAFKA_ADVERTISED_PORT: 9092
      KAFKA_ZOOKEEPER_CONNECT: zoo:2181
-     KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+     KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
-     KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+     KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
      
   disco:
     image: gliderlabs/consul
@@ -36,7 +36,7 @@ services:
      - "8500:8500"
      - "8600:8600/udp"
     networks:
-      micronet:
+      - micronet
     command: ["agent", "-server", "-bootstrap-expect=1", "-data-dir=/tmp/consul", "-node=disco", "-client=0.0.0.0"]
     
   lastread:
@@ -48,7 +48,7 @@ services:
      - kafka
      - disco
     networks:
-      micronet:
+      - micronet
     environment:
      CONSUL_AGENT_ADDR: disco
      CONSUL_AGENT_PORT: 8500
@@ -63,7 +63,7 @@ services:
      - kafka
      - disco
     networks:
-      micronet:
+      - micronet
     environment:
      CONSUL_AGENT_ADDR: disco
      CONSUL_AGENT_PORT: 8500
@@ -78,7 +78,7 @@ services:
      - kafka
      - disco
     networks:
-      micronet:
+      - micronet
     environment:
      CONSUL_AGENT_ADDR: disco
      CONSUL_AGENT_PORT: 8500
@@ -95,7 +95,7 @@ services:
      - readbook
      - lastread
     networks:
-      micronet:
+      - micronet
     environment:
      CONSUL_AGENT_ADDR: disco
      CONSUL_AGENT_PORT: 8500
