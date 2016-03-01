@@ -16,6 +16,14 @@ Once they are installed, you can get the code:
 
 	$ git clone https://github.com/Lawouach/event-driven-microservice.git
 
+First, build the appropriate image:
+
+
+.. code-block:: console
+
+	$ docker build -t bookshelf:0.1 .
+
+	
 You can now run the cluster with a simple call to:
 
 
