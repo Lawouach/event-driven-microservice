@@ -1,0 +1,190 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zoo
+  labels:
+    app: kvstore
+spec:
+  ports:
+  - port: 2181
+    name: zoo-port
+    targetPort: 2181
+    protocol: TCP
+  selector:
+    app: kvstore
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: events
+  labels:
+    app: eventstore
+spec:
+  ports:
+  - port: 9092
+    name: kafka-port
+    targetPort: 9092
+    protocol: TCP
+  selector:
+    app: eventstore
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: disco
+  labels:
+    app: svcdisco
+spec:
+  ports:
+  - port: 8400
+    name: rpc-consul-port
+    targetPort: 8400
+    protocol: TCP
+  - port: 8500
+    name: http-consul-port
+    targetPort: 8500
+    protocol: TCP
+  - port: 8600
+    name: dns-consul-port
+    targetPort: 8600
+    protocol: UDP
+  selector:
+    app: svcdisco
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookshelf
+  labels:
+    app: bookshelf
+spec:
+  ports:
+  - port: 8000
+    name: bookshelf-port
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: bookshelf
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: service-disco-controller
+spec:
+  replicas: 1
+  selector:
+    app: svcdisco
+  template:
+    metadata:
+      labels:
+        app: svcdisco
+    spec:
+      containers:
+      - name: disco
+        image: gliderlabs/consul
+        ports:
+        - containerPort: 8400
+        - containerPort: 8500
+        - containerPort: 8600
+          protocol: UDP
+        args: ["agent", "-server", "-bootstrap-expect=1", "-data-dir=/tmp/consul", "-node=disco", "-client=0.0.0.0", "-ui"]
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: kv-store-controller
+spec:
+  replicas: 1
+  selector:
+    app: kvstore
+  template:
+    metadata:
+      labels:
+        app: kvstore
+    spec:
+      containers:
+      - name: zoo
+        image: wurstmeister/zookeeper
+        ports:
+        - containerPort: 2181
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: event-storage-controller
+spec:
+  replicas: 1
+  selector:
+    app: eventstore
+  template:
+    metadata:
+      labels:
+        app: eventstore
+    spec:
+      containers:
+      - name: eventstorage
+        image: wurstmeister/kafka
+        ports:
+        - containerPort: 9092
+        env:
+        - name: KAFKA_ADVERTISED_PORT
+          value: "9092"
+        - name: KAFKA_ADVERTISED_HOST_NAME
+          value: events
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: zoo:2181
+        - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+          value: "true"
+        - name: KAFKA_DEFAULT_REPLICATION_FACTOR
+          value: "1"
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: bookshelf-controller
+spec:
+  replicas: 1
+  selector:
+    app: bookshelf
+  template:
+    metadata:
+      labels:
+        app: bookshelf
+    spec:
+      containers:
+      - name: lastread
+        image: lawouach/bookshelf:0.1
+        env:
+         - name: CONSUL_AGENT_ADDR
+           value: "disco"
+         - name: CONSUL_AGENT_PORT
+           value: "8500"
+        args: ["/usr/local/app/bookshelf/views/last_read.py", "--delay", "10", "--port", "8081", "--broker", "events:9092", "--name", "lastreadbooks", "--id", "lastread1", "--tags", "books", "last"]
+      - name: newbook
+        image: lawouach/bookshelf:0.1
+        env:
+         - name: CONSUL_AGENT_ADDR
+           value: "disco"
+         - name: CONSUL_AGENT_PORT
+           value: "8500"
+        args: ["/usr/local/app/bookshelf/aggregates/new_book.py", "--delay", "10", "--port", "8082", "--broker", "events:9092", "--name", "newbook", "--id", "newbook1", "--tags", "books", "new"]
+      - name: readbook
+        image: lawouach/bookshelf:0.1
+        env:
+         - name: CONSUL_AGENT_ADDR
+           value: "disco"
+         - name: CONSUL_AGENT_PORT
+           value: "8500"
+        args: ["/usr/local/app/bookshelf/aggregates/book_read.py", "--delay", "10", "--port", "8083", "--broker", "events:9092", "--name", "readbook", "--id", "readbook1", "--tags", "books", "read"]
+      - name: api
+        image: lawouach/bookshelf:0.1
+        ports:
+        - containerPort: 8080
+        env:
+         - name: CONSUL_AGENT_ADDR
+           value: "disco"
+         - name: CONSUL_AGENT_PORT
+           value: "8500"
+        args: ["/usr/local/app/bookshelf/gateways/shelf.py"]

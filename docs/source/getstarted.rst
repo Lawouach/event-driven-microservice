@@ -56,3 +56,38 @@ containers are running. On a Linux box, this is likely
 `localhost`. If you are using a virtual machine to
 run your docker containers (like through boot2docker, you
 may retrieve the IP through `boot2docker ip`.
+
+Kubernetes deployment
+---------------------
+
+A different kind of deployment and management of the
+cluster is through `Kubernetes <http://kubernetes.io/>`_.
+Kubernetes is a service orchestration and management toolkit
+that makes it simple to run and scale microservices
+on premises or on public cloud.
+
+This assumes you have `installed Kubernetes <http://kubernetes.io/v1.1/docs/getting-started-guides/README.html>`_
+according to your needs.
+
+Make sure you also have the `kubectl` command in your `PATH`
+on your local machine. Simply `download Kubernetes <https://github.com/kubernetes/kubernetes/releases>`_,
+unpack it and set your `PATH` pointing to the `kubernetes/cluster`
+directory.
+
+Then run the following command:
+
+.. code-block:: python
+
+	$ kubctl create -f kube.yaml
+
+This will create four different replication controllers:
+
+* one to manage Zookeeper with an internal kube service called `zoo`
+* one to manage Kafka with an internal kube service called `events`
+* one to manage Consul with an internal kube service called `disco`
+* one to manage the Bookshelf showcase with a public kube service called `bookshelf`
+
+If you are running this on AWS, this will result into a AWS
+load-balancer to be created with port `8000` exposed. This will
+be used to access the bookshelf REST API exposed by the
+gateway.
