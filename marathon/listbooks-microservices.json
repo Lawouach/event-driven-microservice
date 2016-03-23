@@ -1,0 +1,27 @@
+{
+  "id": "booklist",
+  "args": ["/usr/local/app/bookshelf/aggregates/list_books.py", "--delay", "10", "--broker", "kafka:9092", "--name", "booklist", "--id", "booklist1", "--tags", "books", "list"],
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+      "type": "DOCKER",
+      "docker": {
+        "image": "lawouach/bookshelf:0.2",
+        "network": "BRIDGE",
+        "portMappings": [
+            {
+                "containerPort": 8080,
+                "hostPort": 0,
+                "servicePort": 8084,
+                "protocol": "tcp"
+            }
+        ],
+        "parameters": [
+            { "key": "hostname", "value": "booklist.service.consul" },
+            { "key": "env", "value": "CONSUL_AGENT_ADDR=consul" },
+            { "key": "env", "value": "CONSUL_AGENT_PORT=8500" }
+        ]
+      }
+  }
+}

@@ -41,6 +41,28 @@ def add_a_book():
     return jsonify(id=book['id']), 201
 
 
+@app.route("/bookshelf/books", methods=['GET'])
+def list_books():
+    """
+    List books into your bookshelf.
+    ---
+    tags:
+      - bookshelf
+    responses:
+      200:
+        description: the list of books
+        schema:
+          properties:
+            result:
+              type: array
+              description: list of books
+    """
+    r = requests.get(webapp['booklist']['url'])
+    return Response(response=json.dumps(r.json()),
+                    status=200,
+                    mimetype="application/json")
+
+
 @app.route("/bookshelf/books/last/read", methods=['GET'])
 def last_read_book():
     """
@@ -109,6 +131,7 @@ def run():
     
     loop = asyncio.get_event_loop()
     loop.run_until_complete(wait_until_peer_service_is_available('newbook'))
+    loop.run_until_complete(wait_until_peer_service_is_available('booklist'))
     loop.run_until_complete(wait_until_peer_service_is_available('lastreadbooks'))
     loop.run_until_complete(wait_until_peer_service_is_available('readbook'))
     loop.close()
