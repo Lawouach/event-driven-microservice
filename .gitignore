@@ -63,3 +63,6 @@ target/
 
 #Emacs backups
 *~
+
+.vagrant
+
