@@ -91,3 +91,74 @@ If you are running this on AWS, this will result into a AWS
 load-balancer to be created with port `8000` exposed. This will
 be used to access the bookshelf REST API exposed by the
 gateway.
+
+Mesos/Marathon deployment
+-------------------------
+
+`Marathon <https://mesosphere.github.io/marathon/>`_  is a
+service orchestration and management tool, much like Kubernetes,
+that allows you to run and scale your microservices accross
+datacenters.
+
+To make it to try it out, the repository provides a simple
+set of provisioning scripts that will deploy a single Mesos/Marathon
+node locally in a VirtualBox virtual machine.
+
+You will need:
+
+* `VirtualBox <https://www.virtualbox.org/>`_
+* `Vagrant <https://www.vagrantup.com/>`_
+
+Once installed, run the following command:
+
+.. code-block:: console
+
+    $ vagrant up
+
+This will create a single virtual machine with 1 CPU, 2Gb RAM
+and 40Gb disk usage.
+
+Once the process is finished, you will be able to access:
+
+* the `mesos dashboard <http://localhost:5050/>`
+* the `marathon dashboard <http://localhost:8079/>`
+* the `consul dashboard <http://localhost:8500/ui>`
+
+To execute your microservices, run the following
+commands:
+
+.. code-block:: console
+
+    $ curl -X POST -H "Content-Type: application/json" --data @marathon/mesos-consul.json http://localhost:8079/v2/apps
+    $ curl -X POST -H "Content-Type: application/json" --data @marathon/zookeeper.json http://localhost:8079/v2/apps
+    $ curl -X POST -H "Content-Type: application/json" --data @marathon/kafka.json http://localhost:8079/v2/apps
+    $ curl -X POST -H "Content-Type: application/json" --data @marathon/newbook-microservice.json http://localhost:8079/v2/apps
+    $ curl -X POST -H "Content-Type: application/json" --data @marathon/readbook-microservice.json http://localhost:8079/v2/apps
+    $ curl -X POST -H "Content-Type: application/json" --data @marathon/lastread-microservice.json http://localhost:8079/v2/apps
+    $ curl -X POST -H "Content-Type: application/json" --data @marathon/api-gateway.json http://localhost:8079/v2/apps
+
+You may want to give 10 seconds between each call so that
+each service had the time to properly start up.
+
+Once all services are running you will see them
+in the marathon and consul dashboards. You will be
+able to call the bookshelf API on http://localhost:8080/bookshelf.
+
+.. note::
+
+   In order to declare the services, we rely on Consul
+   with the `Mesos-Consul bridge <https://github.com/CiscoCloud/mesos-consul>`_
+   that listen to Mesos events to automatically register
+   microservices managed by marathon to the consul service
+   discovery. Funnily, the mesos-consul service is itself
+   managed by marathon.
+
+   The downside is that we can't benefit from the groups
+   features of marathon because the task name will be derived
+   from the complete task identification. So if your app is
+   defined in a group and has the identifier
+   ``/microservice/bookshelf/newbook``, it will be registered
+   to the consul service as ``microservice-bookshelf-newbook``.
+
+   If you can adapt your microservices to support this naming
+   then you should rely on marathon grouping feature.
