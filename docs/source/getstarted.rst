@@ -120,9 +120,9 @@ and 40Gb disk usage.
 
 Once the process is finished, you will be able to access:
 
-* the `mesos dashboard <http://localhost:5050/>`
-* the `marathon dashboard <http://localhost:8079/>`
-* the `consul dashboard <http://localhost:8500/ui>`
+* the `mesos dashboard <http://localhost:5050/>`_
+* the `marathon dashboard <http://localhost:8079/>`_
+* the `consul dashboard <http://localhost:8500/ui>`_
 
 To execute your microservices, run the following
 commands:
