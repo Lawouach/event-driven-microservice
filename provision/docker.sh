@@ -14,4 +14,4 @@ sudo systemctl start docker
 docker pull ciscocloud/mesos-consul
 docker pull wurstmeister/zookeeper
 docker pull wurstmeister/kafka
-docker pull lawouach/bookshelf:0.1
+docker pull lawouach/bookshelf:0.2

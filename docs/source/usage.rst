@@ -109,6 +109,33 @@ at http://<host>:8000/apidocs/index.html.
 	 "published": "1949"
       }
 
+.. http:get:: /bookshelf/books
+	      
+   Retrieve the list of all your books.
+   
+	       
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /bookshelf/books HTTP/1.1
+      Host: example.com
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      
+      [{
+	 "id": "45b9fc30-5dfb-4c55-b762-2fc9560305c2",
+         "title": "1984",
+	 "author": "George Orwell",
+	 "published": "1949"
+      }]
+
 .. http:post:: /bookshelf/books/(id)/finished
 
    Set the book identified by `id` as finished.

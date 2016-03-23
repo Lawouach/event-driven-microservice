@@ -7,7 +7,7 @@
   "container": {
       "type": "DOCKER",
       "docker": {
-        "image": "lawouach/bookshelf:0.1",
+        "image": "lawouach/bookshelf:0.2",
         "network": "BRIDGE",
         "portMappings": [
             {

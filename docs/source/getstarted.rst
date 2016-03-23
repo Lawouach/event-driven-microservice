@@ -21,7 +21,7 @@ First, build the appropriate image:
 
 .. code-block:: console
 
-	$ docker build -t bookshelf:0.1 .
+	$ docker build -t bookshelf:0.2 .
 
 	
 You can now run the cluster with a simple call to:
@@ -115,7 +115,7 @@ Once installed, run the following command:
 
     $ vagrant up
 
-This will create a single virtual machine with 1 CPU, 2Gb RAM
+This will create a single virtual machine with 1 CPU, 3Gb RAM
 and 40Gb disk usage.
 
 Once the process is finished, you will be able to access:
@@ -135,6 +135,7 @@ commands:
     $ curl -X POST -H "Content-Type: application/json" --data @marathon/newbook-microservice.json http://localhost:8079/v2/apps
     $ curl -X POST -H "Content-Type: application/json" --data @marathon/readbook-microservice.json http://localhost:8079/v2/apps
     $ curl -X POST -H "Content-Type: application/json" --data @marathon/lastread-microservice.json http://localhost:8079/v2/apps
+    $ curl -X POST -H "Content-Type: application/json" --data @marathon/listbooks-microservice.json http://localhost:8079/v2/apps
     $ curl -X POST -H "Content-Type: application/json" --data @marathon/api-gateway.json http://localhost:8079/v2/apps
 
 You may want to give 10 seconds between each call so that

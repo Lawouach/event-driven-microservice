@@ -155,7 +155,7 @@ spec:
     spec:
       containers:
       - name: lastread
-        image: lawouach/bookshelf:0.1
+        image: lawouach/bookshelf:0.2
         env:
          - name: CONSUL_AGENT_ADDR
            value: "disco"
@@ -163,7 +163,7 @@ spec:
            value: "8500"
         args: ["/usr/local/app/bookshelf/views/last_read.py", "--delay", "10", "--port", "8081", "--broker", "events:9092", "--name", "lastreadbooks", "--id", "lastread1", "--tags", "books", "last"]
       - name: newbook
-        image: lawouach/bookshelf:0.1
+        image: lawouach/bookshelf:0.2
         env:
          - name: CONSUL_AGENT_ADDR
            value: "disco"
@@ -171,15 +171,23 @@ spec:
            value: "8500"
         args: ["/usr/local/app/bookshelf/aggregates/new_book.py", "--delay", "10", "--port", "8082", "--broker", "events:9092", "--name", "newbook", "--id", "newbook1", "--tags", "books", "new"]
       - name: readbook
-        image: lawouach/bookshelf:0.1
+        image: lawouach/bookshelf:0.2
         env:
          - name: CONSUL_AGENT_ADDR
            value: "disco"
          - name: CONSUL_AGENT_PORT
            value: "8500"
         args: ["/usr/local/app/bookshelf/aggregates/book_read.py", "--delay", "10", "--port", "8083", "--broker", "events:9092", "--name", "readbook", "--id", "readbook1", "--tags", "books", "read"]
+      - name: booklist
+        image: lawouach/bookshelf:0.2
+        env:
+         - name: CONSUL_AGENT_ADDR
+           value: "disco"
+         - name: CONSUL_AGENT_PORT
+           value: "8500"
+        args: ["/usr/local/app/bookshelf/aggregates/list_books.py", "--delay", "10", "--port", "8084", "--broker", "events:9092", "--name", "booklist", "--id", "booklist1", "--tags", "books", "list"]
       - name: api
-        image: lawouach/bookshelf:0.1
+        image: lawouach/bookshelf:0.2
         ports:
         - containerPort: 8080
         env:

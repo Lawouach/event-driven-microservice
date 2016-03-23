@@ -40,7 +40,7 @@ services:
     command: ["agent", "-server", "-bootstrap-expect=1", "-data-dir=/tmp/consul", "-node=disco", "-client=0.0.0.0", "-ui"]
     
   lastread:
-    image: bookshelf:0.1
+    image: bookshelf:0.2
     container_name: lastread
     ports:
      - "8080:8080"
@@ -55,7 +55,7 @@ services:
     command: ["/usr/local/app/bookshelf/views/last_read.py", "--delay", "10", "--broker", "kafka:9092", "--name", "lastreadbooks", "--id", "lastread1", "--tags", "books", "last"]
     
   newbook:
-    image: bookshelf:0.1
+    image: bookshelf:0.2
     container_name: newbook
     ports:
      - "8081:8080"
@@ -70,7 +70,7 @@ services:
     command: ["/usr/local/app/bookshelf/aggregates/new_book.py", "--delay", "10", "--broker", "kafka:9092", "--name", "newbook", "--id", "newbook1", "--tags", "books", "new"]
     
   readbook:
-    image: bookshelf:0.1
+    image: bookshelf:0.2
     container_name: readbook
     ports:
      - "8082:8080"
@@ -84,8 +84,23 @@ services:
      CONSUL_AGENT_PORT: 8500
     command: ["/usr/local/app/bookshelf/aggregates/book_read.py", "--delay", "10", "--broker", "kafka:9092", "--name", "readbook", "--id", "readbook1", "--tags", "books", "read"]
     
+  booklist:
+    image: bookshelf:0.2
+    container_name: booklist
+    ports:
+     - "8084:8080"
+    depends_on:
+     - kafka
+     - disco
+    networks:
+      - micronet
+    environment:
+     CONSUL_AGENT_ADDR: disco
+     CONSUL_AGENT_PORT: 8500
+    command: ["/usr/local/app/bookshelf/aggregates/list_books.py", "--delay", "10", "--broker", "kafka:9092", "--name", "booklist", "--id", "booklist1", "--tags", "books", "list"]
+    
   api:
-    image: bookshelf:0.1
+    image: bookshelf:0.2
     container_name: api
     ports:
      - "8000:8080"
