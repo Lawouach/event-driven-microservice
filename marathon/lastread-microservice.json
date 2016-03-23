@@ -1,5 +1,5 @@
 {
-  "id": "lastread",
+  "id": "lastreadbooks",
   "args": ["/usr/local/app/bookshelf/views/last_read.py", "--delay", "10", "--broker", "kafka:9092", "--name", "lastreadbooks", "--id", "lastread1", "--tags", "books", "last"],
   "cpus": 0.1,
   "mem": 128.0,
