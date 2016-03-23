@@ -1,0 +1,27 @@
+{
+  "id": "readbook",
+  "args": ["/usr/local/app/bookshelf/aggregates/book_read.py", "--delay", "10", "--broker", "kafka:9092", "--name", "readbook", "--id", "readbook1", "--tags", "books", "read"],
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+      "type": "DOCKER",
+      "docker": {
+        "image": "lawouach/bookshelf:0.1",
+        "network": "BRIDGE",
+        "portMappings": [
+            {
+                "containerPort": 8080,
+                "hostPort": 0,
+                "servicePort": 8082,
+                "protocol": "tcp"
+            }
+        ],
+        "parameters": [
+            { "key": "hostname", "value": "readbook.service.consul" },
+            { "key": "env", "value": "CONSUL_AGENT_ADDR=consul" },
+            { "key": "env", "value": "CONSUL_AGENT_PORT=8500" }
+        ]
+      }
+  }
+}

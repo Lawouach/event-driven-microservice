@@ -1,0 +1,27 @@
+{
+  "id": "lastread",
+  "args": ["/usr/local/app/bookshelf/views/last_read.py", "--delay", "10", "--broker", "kafka:9092", "--name", "lastreadbooks", "--id", "lastread1", "--tags", "books", "last"],
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+      "type": "DOCKER",
+      "docker": {
+        "image": "lawouach/bookshelf:0.1",
+        "network": "BRIDGE",
+        "portMappings": [
+            {
+                "containerPort": 8080,
+                "hostPort": 0,
+                "servicePort": 8080,
+                "protocol": "tcp"
+            }
+        ],
+        "parameters": [
+            { "key": "hostname", "value": "lastread.service.consul" },
+            { "key": "env", "value": "CONSUL_AGENT_ADDR=consul" },
+            { "key": "env", "value": "CONSUL_AGENT_PORT=8500" }
+        ]
+      }
+  }
+}

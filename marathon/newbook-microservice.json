@@ -1,0 +1,27 @@
+{
+  "id": "newbook",
+  "args": ["/usr/local/app/bookshelf/aggregates/new_book.py", "--delay", "10", "--broker", "kafka:9092", "--name", "newbook", "--id", "newbook1", "--tags", "books", "new"],
+  "cpus": 0.1,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+      "type": "DOCKER",
+      "docker": {
+        "image": "lawouach/bookshelf:0.1",
+        "network": "BRIDGE",
+        "portMappings": [
+            {
+                "containerPort": 8080,
+                "hostPort": 0,
+                "servicePort": 8081,
+                "protocol": "tcp"
+            }
+        ],
+        "parameters": [
+            { "key": "hostname", "value": "newbook.service.consul" },
+            { "key": "env", "value": "CONSUL_AGENT_ADDR=consul" },
+            { "key": "env", "value": "CONSUL_AGENT_PORT=8500" }
+        ]
+      }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "args": [
+    "--zk=zk://zookeeper.service.consul:2181/mesos",
+    "--log-level=debug",
+    "--consul",
+    "--refresh=5s"
+  ],
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "network": "BRIDGE",
+      "image": "ciscocloud/mesos-consul"
+    }
+  },
+  "id": "mesos-consul",
+  "instances": 1,
+  "cpus": 0.1,
+  "mem": 256
+}

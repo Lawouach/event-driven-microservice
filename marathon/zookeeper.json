@@ -1,0 +1,24 @@
+{
+  "id": "/zoo",
+  "args": [],
+  "cpus": 0.2,
+  "mem": 256.0,
+  "instances": 1,
+  "container": {
+      "type": "DOCKER",
+      "docker": {
+        "image": "wurstmeister/zookeeper",
+        "network": "BRIDGE",
+        "portMappings": [
+            {
+                "containerPort": 2181,
+                "hostPort": 0,
+                "servicePort": 2181,
+                "protocol": "tcp"
+            }
+        ],
+        "parameters": [
+            { "key": "hostname", "value": "zoo.service.consul" }
+        ]}
+    }
+}

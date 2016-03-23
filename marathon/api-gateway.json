@@ -1,0 +1,27 @@
+{
+  "id": "api",
+  "args": ["/usr/local/app/bookshelf/gateways/shelf.py"],
+  "cpus": 0.2,
+  "mem": 128.0,
+  "instances": 1,
+  "container": {
+      "type": "DOCKER",
+      "docker": {
+        "image": "lawouach/bookshelf:0.1",
+        "network": "BRIDGE",
+        "portMappings": [
+            {
+                "containerPort": 8080,
+                "hostPort": 8080,
+                "servicePort": 0,
+                "protocol": "tcp"
+            }
+        ],
+        "parameters": [
+            { "key": "hostname", "value": "api.service.consul" },
+            { "key": "env", "value": "CONSUL_AGENT_ADDR=consul" },
+            { "key": "env", "value": "CONSUL_AGENT_PORT=8500" }
+        ]
+      }
+  }
+}

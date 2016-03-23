@@ -1,0 +1,31 @@
+{
+  "id": "/kafka",
+  "args": [],
+  "cpus": 0.2,
+  "mem": 512.0,
+  "instances": 1,
+  "container": {
+      "type": "DOCKER",
+      "docker": {
+        "image": "wurstmeister/kafka",
+        "network": "BRIDGE",
+        "portMappings": [
+            {
+                "containerPort": 9092,
+                "hostPort": 0,
+                "servicePort": 9092,
+                "protocol": "tcp"
+            }
+        ],
+        "parameters": [
+            { "key": "hostname", "value": "kafka.service.consul" },
+            { "key": "env", "value": "KAFKA_BROKER_ID=1" },
+            { "key": "env", "value": "KAFKA_ADVERTISED_HOST_NAME=kafka.service.consul" },
+            { "key": "env", "value": "KAFKA_ADVERTISED_PORT=9092" },
+            { "key": "env", "value": "KAFKA_ZOOKEEPER_CONNECT=zoo.service.consul:2181" },
+            { "key": "env", "value": "KAFKA_DEFAULT_REPLICATION_FACTOR=1" },
+            { "key": "env", "value": "KAFKA_AUTO_CREATE_TOPICS_ENABLE=true" }
+        ]
+      }
+    }
+}
